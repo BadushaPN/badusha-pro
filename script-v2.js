@@ -196,32 +196,119 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ==========================================================================
+       TEXT SPLITTING HELPER FUNCTIONS
+       ========================================================================== */
+    function splitElementIntoWords(element) {
+        if (!element) return;
+        const nodes = Array.from(element.childNodes);
+        element.innerHTML = "";
+        
+        nodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent;
+                const words = text.split(/(\s+)/);
+                words.forEach(word => {
+                    if (word.trim() === "") {
+                        element.appendChild(document.createTextNode(word));
+                    } else {
+                        const spanWrapper = document.createElement("span");
+                        spanWrapper.className = "word-wrapper";
+                        
+                        const spanAnim = document.createElement("span");
+                        spanAnim.className = "anim-word";
+                        spanAnim.textContent = word;
+                        
+                        spanWrapper.appendChild(spanAnim);
+                        element.appendChild(spanWrapper);
+                    }
+                });
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.tagName === "BR") {
+                    element.appendChild(document.createElement("br"));
+                } else if (node.classList.contains("highlight")) {
+                    const highlightText = node.textContent;
+                    const spanHighlight = document.createElement("span");
+                    spanHighlight.className = "highlight word-wrapper";
+                    
+                    const spanAnim = document.createElement("span");
+                    spanAnim.className = "anim-word";
+                    spanAnim.textContent = highlightText;
+                    
+                    spanHighlight.appendChild(spanAnim);
+                    element.appendChild(spanHighlight);
+                } else {
+                    element.appendChild(node.cloneNode(true));
+                }
+            }
+        });
+    }
+
+    function splitElementIntoChars(element) {
+        if (!element) return;
+        const text = element.textContent.trim();
+        element.innerHTML = "";
+        
+        [...text].forEach(char => {
+            const charSpan = document.createElement("span");
+            if (char === " ") {
+                charSpan.innerHTML = "&nbsp;";
+                charSpan.style.display = "inline-block";
+            } else {
+                charSpan.className = "anim-char";
+                charSpan.textContent = char;
+            }
+            element.appendChild(charSpan);
+        });
+    }
+
+    /* ==========================================================================
        GSAP ANIMATIONS: TEXT & SECTION REVEALS
        ========================================================================== */
     
     // Page load transition
-    gsap.from(".hero-title", {
+    const heroTitle = document.querySelector(".hero-title");
+    const heroSubtitle = document.querySelector(".hero-subtitle");
+    
+    if (heroTitle) splitElementIntoWords(heroTitle);
+    if (heroSubtitle) splitElementIntoChars(heroSubtitle);
+
+    gsap.from(".logo, .nav-link, .nav-cta .btn", {
+        y: -50,
         opacity: 0,
-        y: 80,
-        duration: 1.5,
-        ease: "power4.out",
-        delay: 0.2
+        duration: 1,
+        stagger: 0.08,
+        ease: "power3.out"
     });
 
-    gsap.from(".hero-subtitle", {
-        opacity: 0,
-        y: 30,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.5
-    });
+    if (heroSubtitle) {
+        gsap.from(".hero-subtitle .anim-char", {
+            opacity: 0,
+            scale: 0.5,
+            filter: "blur(4px)",
+            duration: 0.8,
+            stagger: 0.03,
+            ease: "back.out(1.5)",
+            delay: 0.2
+        });
+    }
 
-    gsap.from(".hero-roles", {
+    if (heroTitle) {
+        gsap.from(".hero-title .anim-word", {
+            yPercent: 100,
+            duration: 1.2,
+            stagger: 0.06,
+            ease: "power4.out",
+            delay: 0.3
+        });
+    }
+
+    gsap.from(".hero-roles .role-tag, .hero-roles .role-separator", {
         opacity: 0,
-        y: 30,
-        duration: 1.2,
+        y: 20,
+        duration: 1,
+        stagger: 0.12,
         ease: "power3.out",
-        delay: 0.7
+        delay: 0.6
     });
 
     gsap.from(".hero-image-wrapper", {
@@ -230,6 +317,13 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 1.8,
         ease: "power3.out",
         delay: 0.4
+    });
+
+    gsap.from(".scroll-down-indicator", {
+        opacity: 0,
+        y: -20,
+        duration: 1,
+        delay: 1
     });
 
     // Splitting text animations on scroll (About Pitch)
@@ -254,22 +348,63 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    // Standard Fade-ins on scroll
-    gsap.from(".about-description", {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        scrollTrigger: {
-            trigger: ".about-description",
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-        }
+    // Scroll triggered section labels & titles
+    document.querySelectorAll(".section-label").forEach(label => {
+        splitElementIntoChars(label);
+        gsap.from(label.querySelectorAll(".anim-char"), {
+            opacity: 0,
+            scale: 1.5,
+            filter: "blur(4px)",
+            duration: 0.6,
+            stagger: 0.02,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+                trigger: label,
+                start: "top 90%",
+                toggleActions: "play none none reverse"
+            }
+        });
     });
 
-    gsap.from(".about-extra-info", {
+    document.querySelectorAll(".section-title").forEach(title => {
+        splitElementIntoWords(title);
+        gsap.from(title.querySelectorAll(".anim-word"), {
+            yPercent: 100,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: title,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    });
+
+    // Paragraph descriptions word-by-word fade-in reveal
+    document.querySelectorAll(".about-description, #about-objective, .slide-desc, .project-desc").forEach(p => {
+        splitElementIntoWords(p);
+        gsap.from(p.querySelectorAll(".anim-word"), {
+            opacity: 0.2,
+            duration: 0.8,
+            stagger: 0.02,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: p,
+                start: "top 85%",
+                end: "top 60%",
+                scrub: true
+            }
+        });
+    });
+
+    // Extra About info & block animations
+    gsap.from(".info-block", {
         opacity: 0,
-        y: 40,
-        duration: 1,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out",
         scrollTrigger: {
             trigger: ".about-extra-info",
             start: "top 85%",
@@ -288,10 +423,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    gsap.from(".strengths-box", {
+    gsap.from(".strengths-box h4, .strength-tag", {
         opacity: 0,
-        y: 40,
-        duration: 1.2,
+        y: 20,
+        duration: 0.8,
+        stagger: 0.05,
+        ease: "power2.out",
         scrollTrigger: {
             trigger: ".strengths-box",
             start: "top 85%",
@@ -322,19 +459,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Highlight items as you scroll
         timelineItems.forEach((item) => {
-            gsap.from(item.querySelector(".timeline-content-box"), {
-                opacity: 0.3,
-                y: 50,
-                duration: 0.8,
+            const contentBox = item.querySelector(".timeline-content-box");
+            const role = item.querySelector(".timeline-role");
+            const company = item.querySelector(".timeline-company");
+            const details = contentBox.querySelectorAll("h5, li");
+            
+            if (role) splitElementIntoWords(role);
+            if (company) splitElementIntoWords(company);
+            
+            const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: item,
                     start: "top 75%",
-                    end: "top 25%",
                     toggleActions: "play none none reverse",
                     onEnter: () => item.classList.add("active"),
                     onLeaveBack: () => item.classList.remove("active")
                 }
             });
+            
+            tl.from(contentBox, {
+                opacity: 0.3,
+                y: 30,
+                duration: 0.8
+            });
+            
+            if (role) {
+                tl.from(role.querySelectorAll(".anim-word"), {
+                    yPercent: 100,
+                    duration: 0.6,
+                    stagger: 0.05
+                }, 0.2);
+            }
+            
+            if (company) {
+                tl.from(company.querySelectorAll(".anim-word"), {
+                    yPercent: 100,
+                    duration: 0.6,
+                    stagger: 0.05
+                }, 0.3);
+            }
+            
+            if (details.length > 0) {
+                tl.from(details, {
+                    opacity: 0,
+                    y: 15,
+                    duration: 0.6,
+                    stagger: 0.03,
+                    ease: "power2.out"
+                }, 0.4);
+            }
         });
     }
 
@@ -349,7 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Translate the container to the left by (totalSlides - 1) * 100vw
         const translationAmount = -((totalSlides - 1) * 100) / totalSlides;
 
-        gsap.to(projectsTrack, {
+        const projectsTween = gsap.to(projectsTrack, {
             xPercent: -80, // 5 slides total. Moving left by 80% shows slides 1, 2, 3, 4 sequentially.
             ease: "none",
             scrollTrigger: {
@@ -365,8 +538,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Add subtle slide element scale and shift triggers
         slides.forEach((slide, i) => {
-            if (i === 0) return; // skip intro
             const card = slide.querySelector(".project-card");
+            if (!card) return;
+            
+            const num = card.querySelector(".project-num");
+            const name = card.querySelector(".project-name");
+            const tags = card.querySelector(".project-tags");
+            const features = card.querySelectorAll(".project-features li");
+            
+            if (name) splitElementIntoWords(name);
             
             gsap.from(card, {
                 opacity: 0.6,
@@ -374,12 +554,56 @@ document.addEventListener("DOMContentLoaded", () => {
                 duration: 1,
                 scrollTrigger: {
                     trigger: slide,
-                    containerAnimation: gsap.getById("projectsTrack"), // hook with container animation
+                    containerAnimation: projectsTween,
                     start: "left 80%",
                     end: "left 20%",
                     scrub: true
                 }
             });
+
+            // Text animations within project card (trigger when card enters view)
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: slide,
+                    containerAnimation: projectsTween,
+                    start: "left 75%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+            
+            if (num) {
+                tl.from(num, {
+                    opacity: 0,
+                    x: -20,
+                    duration: 0.6
+                }, 0.1);
+            }
+            
+            if (name) {
+                tl.from(name.querySelectorAll(".anim-word"), {
+                    yPercent: 100,
+                    duration: 0.8,
+                    stagger: 0.05
+                }, 0.2);
+            }
+            
+            if (tags) {
+                tl.from(tags, {
+                    opacity: 0,
+                    y: 10,
+                    duration: 0.6
+                }, 0.3);
+            }
+            
+            if (features.length > 0) {
+                tl.from(features, {
+                    opacity: 0,
+                    y: 15,
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: "power2.out"
+                }, 0.4);
+            }
         });
     }
 
@@ -389,22 +613,126 @@ document.addEventListener("DOMContentLoaded", () => {
     const skillCategoryCards = document.querySelectorAll(".skill-category-card");
     if (skillCategoryCards.length > 0) {
         skillCategoryCards.forEach((card) => {
+            const techId = card.querySelector(".tech-id");
+            const h3 = card.querySelector("h3");
+            const tags = card.querySelectorAll(".skill-tag");
+            const percents = card.querySelectorAll(".skill-percentage");
             const fills = card.querySelectorAll(".skill-progress-fill");
             
-            gsap.fromTo(fills, 
+            if (techId) splitElementIntoChars(techId);
+            if (h3) splitElementIntoWords(h3);
+            
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+            
+            if (techId) {
+                tl.from(techId.querySelectorAll(".anim-char"), {
+                    opacity: 0,
+                    scale: 1.5,
+                    filter: "blur(2px)",
+                    duration: 0.4,
+                    stagger: 0.02
+                }, 0);
+            }
+            
+            if (h3) {
+                tl.from(h3.querySelectorAll(".anim-word"), {
+                    yPercent: 100,
+                    duration: 0.8,
+                    stagger: 0.05
+                }, 0.1);
+            }
+            
+            tl.from([tags, percents], {
+                opacity: 0,
+                y: 15,
+                duration: 0.6,
+                stagger: 0.03,
+                ease: "power2.out"
+            }, 0.2);
+
+            tl.fromTo(fills, 
                 { scaleX: 0 },
                 {
                     scaleX: 1,
-                    duration: 1.5,
+                    duration: 1.2,
                     ease: "power3.out",
-                    stagger: 0.1,
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
-                }
+                    stagger: 0.08
+                }, 0.3
             );
+        });
+    }
+
+    // Contact Title Mask Reveal
+    const contactTitle = document.querySelector(".contact-huge-title");
+    if (contactTitle) {
+        splitElementIntoWords(contactTitle);
+        gsap.from(contactTitle.querySelectorAll(".anim-word"), {
+            yPercent: 100,
+            duration: 1.2,
+            stagger: 0.06,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: contactTitle,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    }
+
+    // Contact Info Links Fade-in
+    const contactDetails = document.querySelectorAll(".contact-detail-link");
+    if (contactDetails.length > 0) {
+        gsap.from(contactDetails, {
+            opacity: 0,
+            x: -20,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".contact-info",
+                start: "top 90%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    }
+
+    // Form Groups Staggered Reveal
+    const formGroups = document.querySelectorAll(".form-group");
+    if (formGroups.length > 0) {
+        gsap.from(formGroups, {
+            opacity: 0,
+            y: 25,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".contact-form",
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    }
+
+    // Footer Copyright and Social Links Fade-in
+    const footerBottom = document.querySelector(".footer-bottom");
+    if (footerBottom) {
+        gsap.from(footerBottom.querySelectorAll(".copyright, .footer-link"), {
+            opacity: 0,
+            y: 15,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: footerBottom,
+                start: "top 95%",
+                toggleActions: "play none none reverse"
+            }
         });
     }
 

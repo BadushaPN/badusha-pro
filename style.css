@@ -1386,3 +1386,21 @@ body.hovering .custom-cursor-follower {
     transform: translateY(-2px);
     color: var(--color-orange);
 }
+
+/* ==========================================================================
+   TEXT REVEAL ANIMATIONS STYLES
+   ========================================================================== */
+.word-wrapper {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.anim-word {
+    display: inline-block;
+}
+
+.anim-char {
+    display: inline-block;
+}
+
