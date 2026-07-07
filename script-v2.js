@@ -636,18 +636,160 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Reviews Card Reveal
-    const reviewCards = document.querySelectorAll(".review-card");
-    if (reviewCards.length > 0) {
-        gsap.from(reviewCards, {
+    // Reviews 3D Carousel Auto-Looping & Interaction
+    const reviews = document.querySelectorAll(".review-card");
+    const bullets = document.querySelectorAll(".bullet");
+    if (reviews.length === 3) {
+        let currentCenterIndex = 1; // start with Praveen Muthai as center (middle)
+        let autoplayInterval;
+
+        function updateCarouselStates() {
+            reviews.forEach((card, index) => {
+                card.classList.remove("card-left", "card-center", "card-right");
+                let diff = index - currentCenterIndex;
+
+                // Handle circular wrapping for exactly 3 items
+                if (diff === -2) diff = 1;
+                if (diff === 2) diff = -1;
+
+                if (diff === -1) {
+                    card.classList.add("card-left");
+                } else if (diff === 0) {
+                    card.classList.add("card-center");
+                } else if (diff === 1) {
+                    card.classList.add("card-right");
+                }
+            });
+
+            // Update Bullets
+            bullets.forEach((bullet, index) => {
+                if (index === currentCenterIndex) {
+                    bullet.classList.add("active");
+                } else {
+                    bullet.classList.remove("active");
+                }
+            });
+        }
+
+        function rotatePrev() {
+            currentCenterIndex = (currentCenterIndex - 1 + 3) % 3;
+            updateCarouselStates();
+        }
+
+        function rotateNext() {
+            currentCenterIndex = (currentCenterIndex + 1) % 3;
+            updateCarouselStates();
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            autoplayInterval = setInterval(rotateNext, 4500); // rotates every 4.5s
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+            }
+        }
+
+        // Click side cards to center them
+        reviews.forEach((card, index) => {
+            card.addEventListener("click", () => {
+                if (index !== currentCenterIndex) {
+                    currentCenterIndex = index;
+                    updateCarouselStates();
+                    startAutoplay(); // reset timer
+                }
+            });
+        });
+
+        // Click bullets to navigate
+        bullets.forEach((bullet) => {
+            bullet.addEventListener("click", () => {
+                const index = parseInt(bullet.getAttribute("data-index"));
+                if (index !== currentCenterIndex) {
+                    currentCenterIndex = index;
+                    updateCarouselStates();
+                    startAutoplay();
+                }
+            });
+        });
+
+        // Swiping & dragging functionality for horizontal swipe
+        let dragStartX = 0;
+        let isDragging = false;
+
+        const carouselContainer = document.querySelector(".reviews-carousel-container");
+        if (carouselContainer) {
+            // Touch Swipe
+            carouselContainer.addEventListener("touchstart", (e) => {
+                dragStartX = e.touches[0].clientX;
+                isDragging = true;
+                stopAutoplay();
+            }, { passive: true });
+
+            carouselContainer.addEventListener("touchend", (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const dragEndX = e.changedTouches[0].clientX;
+                const diffX = dragEndX - dragStartX;
+                const threshold = 50; // px threshold
+
+                if (diffX < -threshold) {
+                    rotateNext();
+                } else if (diffX > threshold) {
+                    rotatePrev();
+                }
+                startAutoplay();
+            });
+
+            // Mouse Drag
+            carouselContainer.addEventListener("mousedown", (e) => {
+                dragStartX = e.clientX;
+                isDragging = true;
+                stopAutoplay();
+            });
+
+            carouselContainer.addEventListener("mouseup", (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const dragEndX = e.clientX;
+                const diffX = dragEndX - dragStartX;
+                const threshold = 50;
+
+                if (diffX < -threshold) {
+                    rotateNext();
+                } else if (diffX > threshold) {
+                    rotatePrev();
+                }
+                startAutoplay();
+            });
+
+            // Hover interactions & mouse leave safe state
+            carouselContainer.addEventListener("mouseenter", stopAutoplay);
+            carouselContainer.addEventListener("mouseleave", () => {
+                isDragging = false;
+                startAutoplay();
+            });
+        }
+
+        // Initialize state
+        updateCarouselStates();
+        startAutoplay();
+    }
+
+    // Scroll reveal wrapper for the reviews section
+    const reviewsContainer = document.querySelector(".reviews-carousel-container");
+    if (reviewsContainer) {
+        gsap.from([reviewsContainer, ".reviews-bullets"], {
             opacity: 0,
-            y: 50,
-            duration: 1,
+            y: 40,
+            duration: 1.2,
             stagger: 0.15,
             ease: "power3.out",
             scrollTrigger: {
-                trigger: ".reviews-grid",
-                start: "top 85%",
+                trigger: "#reviews",
+                start: "top 75%",
                 toggleActions: "play none none reverse"
             }
         });
