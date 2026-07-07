@@ -8,21 +8,21 @@
     --color-bg-card-hover: #181818;
     --color-border: #222222;
     --color-border-hover: #ff6600;
-    
+
     --color-orange: #ff6600;
     --color-orange-bright: #ff8533;
     --color-orange-dark: #cc5200;
     --color-orange-rgb: 255, 102, 0;
-    
+
     --color-white: #ffffff;
     --color-gray-light: #f5f5f5;
     --color-gray: #a0a0a0;
     --color-gray-dark: #555555;
-    
+
     /* Typography */
     --font-heading: 'Syne', sans-serif;
     --font-body: 'Inter', sans-serif;
-    
+
     /* Global Transitions */
     --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: all 0.2s ease-out;
@@ -31,17 +31,21 @@
 /* ==========================================================================
    RESET & BASE STYLES
    ========================================================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
 html {
-    scroll-behavior: initial; /* Lenis handles smooth scrolling */
+    scroll-behavior: initial;
+    /* Lenis handles smooth scrolling */
     scrollbar-width: thin;
     scrollbar-color: var(--color-orange) var(--color-bg-deep);
-    overflow-x: clip; /* clip doesn't create containing block, so fixed elements remain visible */
+    overflow-x: clip;
+    /* clip doesn't create containing block, so fixed elements remain visible */
 }
 
 body {
@@ -50,7 +54,8 @@ body {
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
-    overflow-x: clip; /* clip prevents horizontal scroll without affecting fixed elements */
+    overflow-x: clip;
+    /* clip prevents horizontal scroll without affecting fixed elements */
     -webkit-font-smoothing: antialiased;
 }
 
@@ -58,13 +63,16 @@ body {
 ::-webkit-scrollbar {
     width: 8px;
 }
+
 ::-webkit-scrollbar-track {
     background: var(--color-bg-deep);
 }
+
 ::-webkit-scrollbar-thumb {
     background: var(--color-orange-dark);
     border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-orange);
 }
@@ -74,7 +82,8 @@ body {
    ========================================================================== */
 .container {
     width: 100%;
-    max-width: 1800px; /* Maximum width for wide displays */
+    max-width: 1800px;
+    /* Maximum width for wide displays */
     margin: 0 auto;
     padding: 0 4rem;
 }
@@ -168,8 +177,11 @@ body.hovering .custom-cursor-follower {
 }
 
 @media (max-width: 1024px) {
-    .custom-cursor, .custom-cursor-follower {
-        display: none; /* Hide on mobile/tablet */
+
+    .custom-cursor,
+    .custom-cursor-follower {
+        display: none;
+        /* Hide on mobile/tablet */
     }
 }
 
@@ -240,11 +252,13 @@ body.hovering .custom-cursor-follower {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Anchor to viewport width, not document width */
+    width: 100vw;
+    /* Anchor to viewport width, not document width */
     z-index: 100;
     padding: 1.5rem 0;
     transition: var(--transition-smooth);
-    overflow: visible; /* Ensure nothing clips the header children */
+    overflow: visible;
+    /* Ensure nothing clips the header children */
 }
 
 .header.scrolled {
@@ -266,7 +280,8 @@ body.hovering .custom-cursor-follower {
 
 @media (max-width: 768px) {
     .header-container {
-        width: 100vw; /* Force viewport-relative width to prevent document-width spillover */
+        width: 100vw;
+        /* Force viewport-relative width to prevent document-width spillover */
         max-width: 100vw;
         padding: 0 1.25rem;
         box-sizing: border-box;
@@ -294,7 +309,8 @@ body.hovering .custom-cursor-follower {
 
 @media (max-width: 768px) {
     .nav-menu {
-        display: none; /* Keep header lightweight on mobile */
+        display: none;
+        /* Keep header lightweight on mobile */
     }
 }
 
@@ -421,6 +437,7 @@ body.hovering .custom-cursor-follower {
         flex-direction: column;
         gap: 0.5rem;
     }
+
     .hero-roles .role-separator {
         display: none;
     }
@@ -474,8 +491,8 @@ body.hovering .custom-cursor-follower {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, rgba(5,5,5,0) 60%, rgba(5,5,5,0.8) 100%),
-                rgba(255, 102, 0, 0.05);
+    background: linear-gradient(180deg, rgba(5, 5, 5, 0) 60%, rgba(5, 5, 5, 0.8) 100%),
+        rgba(255, 102, 0, 0.05);
     mix-blend-mode: color;
     transition: var(--transition-smooth);
     pointer-events: none;
@@ -524,7 +541,8 @@ body.hovering .custom-cursor-follower {
         padding: 0 1.5rem;
         gap: 0;
         z-index: 5;
-        position: static; /* Let the absolute image wrapper stretch relative to hero-section */
+        position: static;
+        /* Let the absolute image wrapper stretch relative to hero-section */
     }
 
     .hero-text-container {
@@ -567,15 +585,15 @@ body.hovering .custom-cursor-follower {
     }
 
     .hero-image-overlay {
-        background: linear-gradient(180deg, 
-            rgba(5, 5, 5, 0.75) 0%, 
-            rgba(5, 5, 5, 0.5) 50%, 
-            rgba(5, 5, 5, 0.9) 100%
-        );
+        background: linear-gradient(180deg,
+                rgba(5, 5, 5, 0.75) 0%,
+                rgba(5, 5, 5, 0.5) 50%,
+                rgba(5, 5, 5, 0.9) 100%);
     }
 
     .hero-image-border {
-        display: none; /* Hide border inset so the background image stretches completely borderless */
+        display: none;
+        /* Hide border inset so the background image stretches completely borderless */
     }
 
     .hero-image-wrapper:hover .hero-img {
@@ -668,8 +686,13 @@ body.hovering .custom-cursor-follower {
 }
 
 @keyframes scroll-line-anim {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(200%); }
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(200%);
+    }
 }
 
 /* ==========================================================================
@@ -860,7 +883,7 @@ body.hovering .custom-cursor-follower {
    EXPERIENCE SECTION (TIMELINE)
    ========================================================================== */
 .experience-section {
-    padding: 12rem 0;
+    padding: 8rem 0;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -870,178 +893,105 @@ body.hovering .custom-cursor-follower {
     }
 }
 
-.timeline-container {
-    position: relative;
-    max-width: 1200px;
+.compact-experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 900px;
     margin: 4rem auto 0 auto;
-    padding-left: 3rem;
 }
 
 @media (max-width: 768px) {
-    .timeline-container {
+    .compact-experience-list {
         margin-top: 2rem;
-        padding-left: 2rem;
+        gap: 1rem;
     }
 }
 
-.timeline-line {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 2px;
-    height: 100%;
-    background-color: var(--color-border);
-}
-
-.timeline-progress {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0%; /* JS scroll animated */
-    background-color: var(--color-orange);
-}
-
-.timeline-item {
-    position: relative;
-    margin-bottom: 6rem;
-}
-
-@media (max-width: 768px) {
-    .timeline-item {
-        margin-bottom: 2rem;
-    }
-}
-
-.timeline-item:last-child {
-    margin-bottom: 0;
-}
-
-.timeline-dot {
-    position: absolute;
-    left: calc(-3rem - 6px); /* Align with timeline line */
-    top: 1.2rem;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background-color: var(--color-bg-deep);
-    border: 2px solid var(--color-border);
-    z-index: 5;
-    transition: var(--transition-smooth);
-}
-
-.timeline-item.active .timeline-dot {
-    border-color: var(--color-orange);
-    background-color: var(--color-orange);
-    box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
-}
-
-.timeline-date {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--color-orange);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-}
-
-.timeline-content-box {
+.compact-experience-item {
+    display: grid;
+    grid-template-columns: 200px 1.5fr 1fr;
+    align-items: center;
+    padding: 2.2rem 3rem;
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    padding: 4rem;
     transition: var(--transition-smooth);
+    position: relative;
+}
+
+@media (max-width: 900px) {
+    .compact-experience-item {
+        grid-template-columns: 150px 1.2fr 1fr;
+        padding: 1.8rem 2rem;
+    }
 }
 
 @media (max-width: 768px) {
-    .timeline-content-box {
+    .compact-experience-item {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
         padding: 1.5rem;
     }
 }
 
-.timeline-content-box:hover {
-    border-color: rgba(255, 102, 0, 0.3);
+.compact-experience-item:hover {
+    border-color: rgba(255, 102, 0, 0.4);
     background-color: var(--color-bg-card-hover);
+    transform: translateX(5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 102, 0, 0.03);
 }
 
-.timeline-role {
-    font-family: var(--font-heading);
-    font-size: 2rem;
+.compact-experience-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--color-orange);
+    transform: scaleY(0);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-origin: bottom;
+}
+
+.compact-experience-item:hover::before {
+    transform: scaleY(1);
+    transform-origin: top;
+}
+
+.experience-date {
+    font-family: monospace;
+    font-size: 0.95rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    color: var(--color-orange);
+    letter-spacing: 0.05em;
 }
 
-.timeline-company {
-    font-size: 1.1rem;
-    color: var(--color-gray);
-    margin-bottom: 3rem;
+.experience-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.experience-role {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 @media (max-width: 768px) {
-    .timeline-company {
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
+    .experience-role {
+        font-size: 1.2rem;
     }
 }
 
-.timeline-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-}
-
-@media (max-width: 900px) {
-    .timeline-body {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .timeline-content-box {
-        padding: 2rem 1.5rem;
-    }
-}
-
-.timeline-block h5 {
-    font-family: var(--font-heading);
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    color: var(--color-white);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.05em;
-    position: relative;
-    padding-bottom: 0.5rem;
-}
-
-.timeline-block h5::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 30px;
-    height: 1px;
-    background-color: var(--color-orange);
-}
-
-.timeline-block ul {
-    list-style: none;
-}
-
-.timeline-block li {
-    font-size: 0.95rem;
+.experience-company {
+    font-size: 1.05rem;
     color: var(--color-gray);
-    margin-bottom: 0.8rem;
-    position: relative;
-    padding-left: 1.2rem;
-    line-height: 1.5;
-}
-
-.timeline-block li::before {
-    content: '→';
-    color: var(--color-orange);
-    position: absolute;
-    left: 0;
+    font-weight: 500;
 }
 
 /* ==========================================================================
@@ -1075,11 +1025,25 @@ body.hovering .custom-cursor-follower {
     top: 0;
 }
 
-.project-slide:nth-child(1) { top: 0px; }
-.project-slide:nth-child(2) { top: 20px; }
-.project-slide:nth-child(3) { top: 40px; }
-.project-slide:nth-child(4) { top: 60px; }
-.project-slide:nth-child(5) { top: 80px; }
+.project-slide:nth-child(1) {
+    top: 0px;
+}
+
+.project-slide:nth-child(2) {
+    top: 20px;
+}
+
+.project-slide:nth-child(3) {
+    top: 40px;
+}
+
+.project-slide:nth-child(4) {
+    top: 60px;
+}
+
+.project-slide:nth-child(5) {
+    top: 80px;
+}
 
 /* ── Mobile: projects layout adjustments ── */
 @media (max-width: 768px) {
@@ -1143,8 +1107,13 @@ body.hovering .custom-cursor-follower {
 }
 
 @keyframes bounce-arrow {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(10px); }
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(10px);
+    }
 }
 
 /* Project Card layout */
@@ -1232,226 +1201,6 @@ body.hovering .custom-cursor-follower {
     width: 6px;
     height: 6px;
     background-color: var(--color-orange);
-}
-
-/* ==========================================================================
-   SKILLS SECTION (FUTURISTIC SCIFI REDESIGN)
-   ========================================================================== */
-.skills-section {
-    padding: 12rem 0;
-    border-bottom: 1px solid var(--color-border);
-    position: relative;
-}
-
-@media (max-width: 768px) {
-    .skills-section {
-        padding: 3.5rem 0 3rem 0;
-    }
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 3rem;
-    margin-top: 4rem;
-}
-
-@media (max-width: 768px) {
-    .skills-grid {
-        gap: 1.5rem;
-        margin-top: 2rem;
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.skill-category-card {
-    position: relative;
-    background: rgba(16, 16, 16, 0.35);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 102, 0, 0.12);
-    padding: 3rem;
-    transition: var(--transition-smooth);
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-}
-
-@media (max-width: 768px) {
-    .skill-category-card {
-        padding: 1.5rem;
-    }
-}
-
-.skill-category-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-    pointer-events: none;
-    transition: var(--transition-smooth);
-}
-
-.skill-category-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 20px;
-    width: 30px;
-    height: 3px;
-    background-color: var(--color-orange);
-    box-shadow: 0 0 10px var(--color-orange);
-    transition: var(--transition-smooth);
-}
-
-.skill-category-card:hover {
-    border-color: rgba(255, 102, 0, 0.5);
-    background-color: rgba(24, 24, 24, 0.55);
-    box-shadow: 0 0 40px rgba(255, 102, 0, 0.15), inset 0 0 15px rgba(255, 102, 0, 0.05);
-    transform: translateY(-5px);
-}
-
-.skill-category-card:hover::after {
-    width: 60px;
-    background-color: var(--color-white);
-    box-shadow: 0 0 15px var(--color-white);
-}
-
-/* Card Header */
-.card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.2rem;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-    position: relative;
-}
-
-.tech-id {
-    font-family: monospace;
-    font-size: 0.75rem;
-    color: var(--color-orange);
-    letter-spacing: 0.1em;
-    opacity: 0.8;
-}
-
-.skill-category-card h3 {
-    font-family: var(--font-heading);
-    font-size: 1.4rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    line-height: 1.2;
-    margin: 0;
-    letter-spacing: 0.02em;
-    border-left: none;
-    padding-left: 0;
-}
-
-.status-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--color-orange);
-    box-shadow: 0 0 8px var(--color-orange);
-    position: relative;
-}
-
-.status-indicator.online {
-    background-color: #00ff66;
-    box-shadow: 0 0 8px #00ff66;
-    animation: pulse-online 2s infinite alternate;
-}
-
-@keyframes pulse-online {
-    0% { opacity: 0.4; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 12px #00ff66, 0 0 20px rgba(0,255,102,0.4); }
-}
-
-/* Skill List */
-.skill-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-}
-
-.skill-tag-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-
-.skill-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.skill-tag {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-gray-light);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-.skill-percentage {
-    font-family: monospace;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--color-orange);
-    letter-spacing: 0.05em;
-}
-
-/* Futuristic Segmented Progress Bar */
-.skill-progress {
-    width: 100%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    position: relative;
-    overflow: visible;
-}
-
-.skill-progress-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: linear-gradient(90deg, var(--color-orange-dark), var(--color-orange));
-    box-shadow: 0 0 8px rgba(var(--color-orange-rgb), 0.4);
-    transform: scaleX(0); /* animated via ScrollTrigger in JS */
-    transform-origin: left;
-    transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-    
-    /* Segmented block overlay pattern */
-    background-image: linear-gradient(
-        90deg,
-        rgba(5, 5, 5, 0.4) 2px,
-        transparent 2px
-    );
-    background-size: 6px 100%;
-}
-
-/* Futuristic Glowing Slider Tip */
-.skill-progress-fill::after {
-    content: '';
-    position: absolute;
-    right: -2px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 14px;
-    background-color: var(--color-white);
-    box-shadow: 0 0 10px var(--color-orange), 0 0 20px var(--color-orange);
-    border-radius: 1px;
 }
 
 /* ==========================================================================
@@ -1570,7 +1319,8 @@ body.hovering .custom-cursor-follower {
     color: var(--color-gray);
 }
 
-.form-group input, .form-group textarea {
+.form-group input,
+.form-group textarea {
     background-color: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--color-border);
     padding: 1.2rem;
@@ -1581,7 +1331,8 @@ body.hovering .custom-cursor-follower {
     transition: var(--transition-fast);
 }
 
-.form-group input:focus, .form-group textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--color-orange);
     background-color: rgba(255, 102, 0, 0.02);
@@ -1696,6 +1447,11 @@ body.hovering .custom-cursor-follower {
     box-shadow: 0 15px 40px rgba(255, 102, 0, 0.15);
     border: 1px solid rgba(255, 102, 0, 0.2);
     background-color: var(--color-bg-deep);
+    cursor: grab;
+}
+
+.project-carousel:active {
+    cursor: grabbing;
 }
 
 /* Base track design for sliding swipe animation */
@@ -1703,7 +1459,8 @@ body.hovering .custom-cursor-follower {
     display: flex;
     width: 100%;
     height: 100%;
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* ultra smooth swipe animation */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    /* snappy transition */
 }
 
 /* Image behavior in track */
@@ -1721,7 +1478,8 @@ body.hovering .custom-cursor-follower {
     width: auto;
     margin: 0 auto;
     border-radius: 36px;
-    border: 8px solid #1c1c1e; /* device mockup border */
+    border: 8px solid #1c1c1e;
+    /* device mockup border */
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 102, 0, 0.08);
 }
 
@@ -1732,7 +1490,8 @@ body.hovering .custom-cursor-follower {
     max-height: 400px;
     width: 100%;
     border-radius: 12px;
-    border: 6px solid #1c1c1e; /* device mockup border */
+    border: 6px solid #1c1c1e;
+    /* device mockup border */
 }
 
 /* Responsive carousel layouts */
@@ -1741,9 +1500,10 @@ body.hovering .custom-cursor-follower {
         height: 440px;
         width: auto;
         margin: 0 auto;
-        order: -1; /* Move image above text on mobile */
+        order: -1;
+        /* Move image above text on mobile */
     }
-    
+
     .project-carousel.landscape {
         width: 100%;
         max-height: 300px;
@@ -1756,4 +1516,3 @@ body.hovering .custom-cursor-follower {
         height: 360px;
     }
 }
-

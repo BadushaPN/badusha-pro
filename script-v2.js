@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     animateFollower();
 
     // Hover states for cursor
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .timeline-content-box, .project-card, .skill-category-card, .strength-tag");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea, .btn, .compact-experience-item, .project-card, .strength-tag");
     interactiveElements.forEach((el) => {
         el.addEventListener("mouseenter", () => {
             document.body.classList.add("hovering");
@@ -436,32 +436,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ==========================================================================
-       GSAP ANIMATIONS: EXPERIENCE TIMELINE
+       GSAP ANIMATIONS: COMPACT EXPERIENCE LIST
        ========================================================================== */
-    const timelineItems = document.querySelectorAll(".timeline-item");
-    if (timelineItems.length > 0) {
-
-        // Progress bar line animation
-        gsap.fromTo(".timeline-progress",
-            { height: "0%" },
-            {
-                height: "100%",
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".timeline-container",
-                    start: "top 25%",
-                    end: "bottom 75%",
-                    scrub: true
-                }
-            }
-        );
-
-        // Highlight items as you scroll
-        timelineItems.forEach((item) => {
-            const contentBox = item.querySelector(".timeline-content-box");
-            const role = item.querySelector(".timeline-role");
-            const company = item.querySelector(".timeline-company");
-            const details = contentBox.querySelectorAll("h5, li");
+    const experienceItems = document.querySelectorAll(".compact-experience-item");
+    if (experienceItems.length > 0) {
+        experienceItems.forEach(item => {
+            const date = item.querySelector(".experience-date");
+            const role = item.querySelector(".experience-role");
+            const company = item.querySelector(".experience-company");
 
             if (role) splitElementIntoWords(role);
             if (company) splitElementIntoWords(company);
@@ -469,23 +451,30 @@ document.addEventListener("DOMContentLoaded", () => {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: item,
-                    start: "top 75%",
-                    toggleActions: "play none none reverse",
-                    onEnter: () => item.classList.add("active"),
-                    onLeaveBack: () => item.classList.remove("active")
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
                 }
             });
 
-            tl.from(contentBox, {
-                opacity: 0.3,
-                y: 30,
-                duration: 0.8
+            tl.from(item, {
+                opacity: 0,
+                x: -30,
+                duration: 0.8,
+                ease: "power3.out"
             });
+
+            if (date) {
+                tl.from(date, {
+                    opacity: 0,
+                    x: -15,
+                    duration: 0.4
+                }, 0.2);
+            }
 
             if (role) {
                 tl.from(role.querySelectorAll(".anim-word"), {
                     yPercent: 100,
-                    duration: 0.6,
+                    duration: 0.5,
                     stagger: 0.05
                 }, 0.2);
             }
@@ -493,19 +482,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (company) {
                 tl.from(company.querySelectorAll(".anim-word"), {
                     yPercent: 100,
-                    duration: 0.6,
+                    duration: 0.5,
                     stagger: 0.05
                 }, 0.3);
-            }
-
-            if (details.length > 0) {
-                tl.from(details, {
-                    opacity: 0,
-                    y: 15,
-                    duration: 0.6,
-                    stagger: 0.03,
-                    ease: "power2.out"
-                }, 0.4);
             }
         });
     }
@@ -587,66 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    /* ==========================================================================
-       GSAP ANIMATIONS: TECHNICAL SKILLS PROGRESS BARS
-       ========================================================================== */
-    const skillCategoryCards = document.querySelectorAll(".skill-category-card");
-    if (skillCategoryCards.length > 0) {
-        skillCategoryCards.forEach((card) => {
-            const techId = card.querySelector(".tech-id");
-            const h3 = card.querySelector("h3");
-            const tags = card.querySelectorAll(".skill-tag");
-            const percents = card.querySelectorAll(".skill-percentage");
-            const fills = card.querySelectorAll(".skill-progress-fill");
-
-            if (techId) splitElementIntoChars(techId);
-            if (h3) splitElementIntoWords(h3);
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
-                }
-            });
-
-            if (techId) {
-                tl.from(techId.querySelectorAll(".anim-char"), {
-                    opacity: 0,
-                    scale: 1.5,
-                    filter: "blur(2px)",
-                    duration: 0.4,
-                    stagger: 0.02
-                }, 0);
-            }
-
-            if (h3) {
-                tl.from(h3.querySelectorAll(".anim-word"), {
-                    yPercent: 100,
-                    duration: 0.8,
-                    stagger: 0.05
-                }, 0.1);
-            }
-
-            tl.from([tags, percents], {
-                opacity: 0,
-                y: 15,
-                duration: 0.6,
-                stagger: 0.03,
-                ease: "power2.out"
-            }, 0.2);
-
-            tl.fromTo(fills,
-                { scaleX: 0 },
-                {
-                    scaleX: 1,
-                    duration: 1.2,
-                    ease: "power3.out",
-                    stagger: 0.08
-                }, 0.3
-            );
-        });
-    }
+    // Technical Skills Section has been removed, so no animations are needed here.
 
     // Contact Title Mask Reveal
     const contactTitle = document.querySelector(".contact-huge-title");
@@ -764,11 +684,152 @@ document.addEventListener("DOMContentLoaded", () => {
             const carouselImages = track.querySelectorAll(".carousel-img");
             if (carouselImages.length > 1) {
                 let currentIndex = 0;
+                let startX = 0;
+                let isDragging = false;
+                let slideWidth = track.clientWidth;
 
-                setInterval(() => {
-                    currentIndex = (currentIndex + 1) % carouselImages.length;
+                // Update slide width on window resize
+                window.addEventListener('resize', () => {
+                    slideWidth = track.clientWidth;
+                    setSliderPosition();
+                });
+
+                // Prevent dragging images
+                carouselImages.forEach(img => {
+                    img.style.userSelect = "none";
+                    img.addEventListener('dragstart', (e) => e.preventDefault());
+                });
+
+                // Start Autoplay
+                let autoplayInterval;
+                function startAutoplay() {
+                    stopAutoplay();
+                    autoplayInterval = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % carouselImages.length;
+                        setPositionByIndex();
+                    }, 3500);
+                }
+
+                function stopAutoplay() {
+                    if (autoplayInterval) {
+                        clearInterval(autoplayInterval);
+                    }
+                }
+
+                // Touch events
+                track.addEventListener('touchstart', touchStart, { passive: true });
+                track.addEventListener('touchend', touchEnd);
+                track.addEventListener('touchmove', touchMove, { passive: true });
+
+                // Mouse events
+                track.addEventListener('mousedown', dragStart);
+                track.addEventListener('mouseup', dragEnd);
+                track.addEventListener('mousemove', dragMove);
+                track.addEventListener('mouseleave', dragEnd);
+
+                function dragStart(event) {
+                    isDragging = true;
+                    startX = event.clientX;
+                    stopAutoplay();
+                    track.style.transition = 'none'; // disable CSS transition during dragging for immediate feedback
+                }
+
+                function dragMove(event) {
+                    if (!isDragging) return;
+                    const currentX = event.clientX;
+                    const diffX = currentX - startX;
+
+                    // Allow dragging past limits but with a resistance/friction factor
+                    let currentPosition = -currentIndex * slideWidth + diffX;
+
+                    // Friction at edges
+                    if (currentIndex === 0 && diffX > 0) {
+                        currentPosition = diffX * 0.3;
+                    } else if (currentIndex === carouselImages.length - 1 && diffX < 0) {
+                        currentPosition = -currentIndex * slideWidth + diffX * 0.3;
+                    }
+
+                    track.style.transform = `translateX(${currentPosition}px)`;
+                }
+
+                function dragEnd(event) {
+                    if (!isDragging) return;
+                    isDragging = false;
+
+                    const endX = event.clientX || startX;
+                    const diffX = endX - startX;
+
+                    // transition back (increased speed)
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+
+                    // Threshold to swipe: 20% of track width
+                    const threshold = slideWidth * 0.2;
+
+                    if (diffX < -threshold && currentIndex < carouselImages.length - 1) {
+                        currentIndex++;
+                    } else if (diffX > threshold && currentIndex > 0) {
+                        currentIndex--;
+                    }
+
+                    setPositionByIndex();
+                    startAutoplay();
+                }
+
+                // Touch handling wrappers for clientX compatibility
+                function touchStart(event) {
+                    isDragging = true;
+                    startX = event.touches[0].clientX;
+                    stopAutoplay();
+                    track.style.transition = 'none';
+                    slideWidth = track.clientWidth;
+                }
+
+                function touchMove(event) {
+                    if (!isDragging) return;
+                    const currentX = event.touches[0].clientX;
+                    const diffX = currentX - startX;
+
+                    let currentPosition = -currentIndex * slideWidth + diffX;
+
+                    if (currentIndex === 0 && diffX > 0) {
+                        currentPosition = diffX * 0.3;
+                    } else if (currentIndex === carouselImages.length - 1 && diffX < 0) {
+                        currentPosition = -currentIndex * slideWidth + diffX * 0.3;
+                    }
+
+                    track.style.transform = `translateX(${currentPosition}px)`;
+                }
+
+                function touchEnd(event) {
+                    if (!isDragging) return;
+                    isDragging = false;
+
+                    const endX = event.changedTouches[0].clientX;
+                    const diffX = endX - startX;
+
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                    const threshold = slideWidth * 0.2;
+
+                    if (diffX < -threshold && currentIndex < carouselImages.length - 1) {
+                        currentIndex++;
+                    } else if (diffX > threshold && currentIndex > 0) {
+                        currentIndex--;
+                    }
+
+                    setPositionByIndex();
+                    startAutoplay();
+                }
+
+                function setPositionByIndex() {
                     track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                }, 2500); // Switch image every 2.5s for a smoother swipe animation
+                }
+
+                function setSliderPosition() {
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }
+
+                // Initial start
+                startAutoplay();
             }
         }
     });
