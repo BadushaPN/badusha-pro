@@ -511,29 +511,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ==========================================================================
-       GSAP ANIMATIONS: PROJECTS HORIZONTAL SCROLL
+       GSAP ANIMATIONS: PROJECTS STACKED CARDS
        ========================================================================== */
     const projectsTrack = document.getElementById("projects-track");
 
     if (projectsTrack) {
         const slides = document.querySelectorAll(".project-slide");
-        const totalSlides = slides.length;
-        const xMovement = -(100 * (totalSlides - 1) / totalSlides);
 
-        const projectsTween = gsap.to(projectsTrack, {
-            xPercent: xMovement,
-            ease: "none",
-            scrollTrigger: {
-                trigger: ".projects-pin-section",
-                pin: true,
-                scrub: true,
-                start: "top top",
-                end: () => "+=" + (window.innerWidth * (totalSlides - 1)),
-                invalidateOnRefresh: true
-            }
-        });
-
-        // Add subtle slide element scale and shift triggers
         slides.forEach((slide, i) => {
             const card = slide.querySelector(".project-card");
             if (!card) return;
@@ -546,14 +530,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (name) splitElementIntoWords(name);
             
             gsap.from(card, {
-                opacity: 0.6,
-                scale: 0.95,
+                opacity: 0.2,
+                y: 150,
+                scale: 0.85,
                 duration: 1,
                 scrollTrigger: {
                     trigger: slide,
-                    containerAnimation: projectsTween,
-                    start: "left 80%",
-                    end: "left 20%",
+                    start: "top 95%",
+                    end: "top 30%",
                     scrub: true
                 }
             });
@@ -562,8 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: slide,
-                    containerAnimation: projectsTween,
-                    start: "left 75%",
+                    start: "top 60%",
                     toggleActions: "play none none reverse"
                 }
             });
