@@ -1225,6 +1225,13 @@ document.addEventListener("DOMContentLoaded", () => {
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Initialize EmailJS (for free client-side auto-response emails)
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init({
+                publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+            });
+        }
+
         // --- Visitor Tracking System ---
         function getOrCreateBrowserId() {
             let id = localStorage.getItem("visitor_browser_id");
@@ -1356,6 +1363,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                     .then(() => {
                         showNotification("Success", "Your message has been sent successfully!", "success");
+
+                        // Send Auto-Response email via EmailJS (if configured)
+                        if (typeof emailjs !== 'undefined') {
+                            const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+                            const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+
+                            if (serviceId && templateId) {
+                                emailjs.send(serviceId, templateId, {
+                                    to_name: name,
+                                    to_email: email,
+                                    user_message: message
+                                }).then(() => {
+                                    console.log("[EmailJS] Auto-thank-you email sent successfully!");
+                                }).catch((err) => {
+                                    console.error("[EmailJS] Error sending auto-thank-you email: ", err);
+                                });
+                            }
+                        }
+
                         contactForm.reset();
                     })
                     .catch((error) => {
