@@ -1225,6 +1225,100 @@ document.addEventListener("DOMContentLoaded", () => {
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // --- Visitor Tracking System ---
+        function getOrCreateBrowserId() {
+            let id = localStorage.getItem("visitor_browser_id");
+            if (!id) {
+                const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                let randStr = "";
+                for (let i = 0; i < 20; i++) {
+                    randStr += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                id = `bid_${randStr}_${Date.now()}`;
+                localStorage.setItem("visitor_browser_id", id);
+            }
+            return id;
+        }
+
+        function getAndIncrementVisitCount() {
+            let visits = localStorage.getItem("local_visit_count");
+            let count = visits ? parseInt(visits, 10) : 0;
+            count++;
+            localStorage.setItem("local_visit_count", count);
+            return count;
+        }
+
+        function getBrowserDetails() {
+            const ua = navigator.userAgent;
+            let browser = "Unknown Browser";
+            let os = "Unknown OS";
+
+            // Simple OS Detection
+            if (/Windows/i.test(ua)) os = "Windows";
+            else if (/Macintosh|Mac OS X/i.test(ua)) os = "macOS";
+            else if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+            else if (/Android/i.test(ua)) os = "Android";
+            else if (/Linux/i.test(ua)) os = "Linux";
+
+            // Simple Browser Detection
+            if (/Firefox/i.test(ua) && !/Seamonkey/i.test(ua)) browser = "Mozilla Firefox";
+            else if (/SamsungBrowser/i.test(ua)) browser = "Samsung Internet";
+            else if (/Opera|OPR/i.test(ua)) browser = "Opera";
+            else if (/MSIE|Trident/i.test(ua)) browser = "Internet Explorer";
+            else if (/Edg/i.test(ua)) browser = "Microsoft Edge";
+            else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Google Chrome";
+            else if (/Safari/i.test(ua) && !/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Apple Safari";
+
+            return {
+                browser,
+                os,
+                userAgent: ua,
+                language: navigator.language || "Unknown",
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+                referrer: document.referrer || "Direct"
+            };
+        }
+
+        try {
+            const browserId = getOrCreateBrowserId();
+            const localVisitCount = getAndIncrementVisitCount();
+            const details = getBrowserDetails();
+
+            // Log visit details in 'visits' collection
+            db.collection("visits").add({
+                browserId: browserId,
+                browserName: details.browser,
+                os: details.os,
+                userAgent: details.userAgent,
+                language: details.language,
+                screenResolution: details.screenResolution,
+                referrer: details.referrer,
+                localVisitCount: localVisitCount,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+                .then((docRef) => {
+                    console.log(`[Analytics] Visit logged successfully (Doc ID: ${docRef.id})`);
+                })
+                .catch((err) => {
+                    console.error("[Analytics] Error logging detailed visit: ", err);
+                });
+
+            // Increment separate global stats count (if permitted by rules)
+            db.collection("stats").doc("global").set({
+                totalVisits: firebase.firestore.FieldValue.increment(1)
+            }, { merge: true })
+                .then(() => {
+                    console.log("[Analytics] Global count incremented successfully");
+                })
+                .catch((err) => {
+                    console.warn("[Analytics] Global count increment bypassed/denied: ", err);
+                });
+
+        } catch (analyticsError) {
+            console.error("[Analytics] Tracking system failed to run: ", analyticsError);
+        }
+        // -------------------------------
+
         const contactForm = document.getElementById("contact-form");
         if (contactForm) {
             contactForm.addEventListener("submit", (e) => {
