@@ -745,6 +745,9 @@ textarea:focus-visible,
         left: 50%;
         transform: translateX(-50%);
         align-items: center;
+        flex-direction: column-reverse;
+        /* Put links above scroll indicator */
+        gap: 1.5rem;
     }
 
     .scroll-down-indicator {
@@ -1819,6 +1822,10 @@ textarea:focus-visible,
         flex-direction: column-reverse;
         gap: 1.5rem;
         text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
     }
 }
 
