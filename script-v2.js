@@ -611,7 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Contact Info Links Fade-in
-    const contactDetails = document.querySelectorAll(".contact-detail-link");
+    const contactDetails = document.querySelectorAll(".contact-detail-link, .contact-social-btn");
     if (contactDetails.length > 0) {
         gsap.from(contactDetails, {
             opacity: 0,
@@ -639,23 +639,6 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".contact-form",
                 start: "top 85%",
-                toggleActions: "play none none reverse"
-            }
-        });
-    }
-
-    // Footer Copyright and Social Links Fade-in
-    const footerBottom = document.querySelector(".footer-bottom");
-    if (footerBottom) {
-        gsap.from(footerBottom.querySelectorAll(".copyright, .footer-link"), {
-            opacity: 0,
-            y: 15,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: footerBottom,
-                start: "top bottom",
                 toggleActions: "play none none reverse"
             }
         });
